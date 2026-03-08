@@ -1,0 +1,190 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2cm]{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{float}
+
+% ── Colors ──────────────────────────────────────────────
+\definecolor{netflix}{HTML}{E50914}
+\definecolor{sectionblue}{HTML}{4B9FD4}
+
+% ── Page style ──────────────────────────────────────────
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textcolor{gray}{Netflix Content Strategy Analytics}}
+\fancyhead[R]{\small\textcolor{gray}{Team 5 — Phase 3}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ── Title formatting ────────────────────────────────────
+\titleformat{\section}{\large\bfseries\color{netflix}}{}{0em}{}
+\titleformat{\subsection}{\normalsize\bfseries\color{sectionblue}}{}{0em}{}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=netflix,
+  urlcolor=sectionblue,
+  citecolor=gray
+}
+
+\begin{document}
+
+% ══════════════════════════════════════════════════════════
+%  TITLE
+% ══════════════════════════════════════════════════════════
+
+\begin{center}
+  {\LARGE\bfseries\textcolor{netflix}{N}etflix Content Strategy Analytics}\\[6pt]
+  {\large Data Visualisation — Project 2, Phase 3 Report}\\[10pt]
+  {\normalsize Team 5}\\[4pt]
+  {\small March 2026}
+\end{center}
+
+\vspace{4pt}
+\noindent\rule{\textwidth}{0.4pt}
+\vspace{4pt}
+
+\noindent\textbf{Website:} \url{https://YOUR-HOSTED-LINK-HERE.com}\\
+\noindent\textbf{YouTube Demo (Unlisted):} \url{https://youtu.be/YOUR-VIDEO-ID}\\
+\noindent\textbf{How to run locally:}
+\begin{verbatim}
+  cd Phase2/
+  python3 -m http.server 8000
+  # Open http://localhost:8000/Phase2/ in a browser
+\end{verbatim}
+
+% ══════════════════════════════════════════════════════════
+\section{1. Dataset}
+% ══════════════════════════════════════════════════════════
+
+We use two Kaggle CSV files covering Netflix's catalog up to 2025:
+
+\begin{itemize}[nosep]
+  \item \textbf{netflix\_movies\_detailed\_up\_to\_2025.csv} — $\sim$16\,000 movies
+  \item \textbf{netflix\_tv\_shows\_detailed\_up\_to\_2025.csv} — $\sim$16\,000 TV shows
+\end{itemize}
+
+\noindent\textbf{Key fields:} \texttt{title}, \texttt{date\_added}, \texttt{release\_year}, \texttt{vote\_average} (IMDb-style rating), \texttt{vote\_count}, \texttt{genres}, \texttt{country}, etc.
+
+% ══════════════════════════════════════════════════════════
+\section{2. Visualisations}
+% ══════════════════════════════════════════════════════════
+
+Our dashboard contains four interactive D3.js visualisations.
+
+% ─── Chart 1 ────────────────────────────────────────────
+\subsection{Chart 1: Content Quality \& Volume (Bubble Chart)}
+
+\textbf{Question:} \textit{How has the volume and quality of Netflix content evolved over time?}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{chart1.png}
+    \caption{Evolution of quality (IMDb Rating) vs Volume (Bubble Area) from 2010 to 2025.}
+\end{figure}
+
+Each bubble represents a cohort of titles. Bubble \textbf{area} encodes the number of titles. Users toggle between \textbf{Both}, Movies (red), and TV Shows (blue). A green band highlights the "high quality" zone ($\geq$7.0).
+
+% ─── Chart 2 ────────────────────────────────────────────
+\subsection{Chart 2: Genre Ecosystem \& Balance (Sunburst / Treemap)}
+
+\textbf{Question:} \textit{How is Netflix's catalog distributed across genres?}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{chart2.png}
+    \caption{Hierarchical breakdown of genres showing the Reality TV segment (2.5\% of catalog).}
+\end{figure}
+
+A hierarchical visualisation with two modes: \textbf{Sunburst} and \textbf{Treemap}. Clicking a genre segment zooms in to show its Movies/TV Shows breakdown.
+
+% ─── Chart 3 ────────────────────────────────────────────
+\subsection{Chart 3: Geographic Diversity \& Market Evolution (Streamgraph)}
+
+\textbf{Question:} \textit{Is Netflix becoming more internationally diverse?}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{chart3.png}
+    \caption{Streamgraph of production countries with Simpson's Diversity Index overlay.}
+\end{figure}
+
+The \textbf{Simpson's Diversity Index} overlay (dashed amber line) quantifies concentration: values closer to 1.0 indicate a more balanced international production.
+
+% ─── Chart 4 ────────────────────────────────────────────
+\subsection{Chart 4: Content Release Heatmap (Month $\times$ Year)}
+
+\textbf{Question:} \textit{When does Netflix add the most content? Are there seasonal patterns?}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{chart4.png}
+    \caption{Heatmap showing titles added per month. Significant growth is visible in early 2025.}
+\end{figure}
+
+Darker cells indicate higher content volume. Users can filter by content type to see specific acquisition strategies.
+
+% ══════════════════════════════════════════════════════════
+\section{3. Design Choices \& Justifications}
+% ══════════════════════════════════════════════════════════
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}p{3.8cm}p{4.2cm}p{6.5cm}@{}}
+\toprule
+\textbf{Principle} & \textbf{Where Applied} & \textbf{Rationale} \\
+\midrule
+\textbf{Area encoding} & Chart 1 bubble sizing & $\sqrt{}$-scale ensures perceived area $\propto$ count. \\
+\addlinespace
+\textbf{Gestalt — Similarity} & Consistent colors & Movies are red, TV Shows are blue across all charts. \\
+\addlinespace
+\textbf{Pre-attentive features} & Heatmap sequential color & Intensity (lightness) allows for rapid pattern recognition. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% ══════════════════════════════════════════════════════════
+\section{4. Challenges \& Limitations}
+% ══════════════════════════════════════════════════════════
+
+\subsection{Challenges}
+\begin{enumerate}[nosep]
+  \item \textbf{Multi-valued fields:} Handling titles belonging to multiple countries/genres.
+  \item \textbf{Performance:} Rendering 32,000+ rows in the browser with smooth interactions.
+\end{enumerate}
+
+\subsection{Limitations}
+\begin{itemize}[nosep]
+  \item \textbf{Rating bias:} Small sample sizes for certain niche genres might skew IMDb averages.
+  \item \textbf{Client-side Only:} Initial load time increases as the CSV dataset grows.
+\end{itemize}
+
+% ══════════════════════════════════════════════════════════
+\section{5. Team Contributions}
+% ══════════════════════════════════════════════════════════
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}lp{10cm}@{}}
+\toprule
+\textbf{Member} & \textbf{Contribution} \\
+\midrule
+Vineel & Data preprocessing, Chart 1 (Bubble Chart), Chart 4 (Heatmap) \\
+Babu & Chart 2 (Sunburst/Treemap), Chart 3 (Streamgraph), Diversity Index \\
+Jithendra & UI/UX Design, CSS, Website Hosting, Video Presentation \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vfill
+\begin{center}
+\small\textcolor{gray}{Data: Netflix Movies \& TV Shows (2010–2025) · Visualisation: D3.js v7 · Report: \LaTeX}
+\end{center}
+
+\end{document}

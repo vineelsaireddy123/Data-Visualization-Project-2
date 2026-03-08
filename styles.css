@@ -1,0 +1,758 @@
+/*
+ * Netflix Content Analytics – Improved Stylesheet
+ * ═══════════════════════════════════════════════
+ * Key improvements:
+ *   1. Typography: DM Serif Display (editorial authority) + DM Sans (clarity)
+ *   2. Color system: WCAG AA–compliant contrasts, role-based tokens
+ *   3. Spacing: 4-pt grid system (4/8/12/16/24/32/48/64 px)
+ *   4. Gestalt: proximity grouping via consistent gap/padding rhythm
+ *   5. Removed visual noise: no extraneous gradients, no emoji in headings
+ *   6. Colorblind-safe accent palette (avoids green/red confusion)
+ */
+
+/* ── Design Tokens ──────────────────────────────────────────── */
+:root {
+  /* Surface */
+  --bg-base: #08090e;
+  --bg-raised: #10131c;
+  --bg-overlay: #1a1f2e;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(255, 255, 255, 0.18);
+
+  /* Text — WCAG AA contrast ratios against dark surfaces */
+  --text-primary: #f0f2f7;
+  --text-secondary: #a0aabf;
+  --text-muted: #606880;
+
+  /* Brand */
+  --netflix-red: #e50914;
+
+  /* Categorical encoding (colorblind-safe: avoids red/green ambiguity) */
+  --movie-color: #e05e6a;
+  /* warm coral-red   — Movies */
+  --show-color: #4b9fd4;
+  /* steel blue       — TV Shows */
+  --accent-amber: #f0a830;
+  /* diversity line   */
+  --accent-teal: #2bbfa4;
+  /* highlight        */
+
+  /* Geography palette — 9 distinct hues, perceptually even spacing */
+  --geo-1: #e05e6a;
+  --geo-2: #4b9fd4;
+  --geo-3: #f0a830;
+  --geo-4: #2bbfa4;
+  --geo-5: #a56ede;
+  --geo-6: #e07b45;
+  --geo-7: #52c4e0;
+  --geo-8: #c45a9e;
+  --geo-9: #8ca8b0;
+  /* "Other" — desaturated */
+
+  /* Typography */
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  /* 4-pt spacing grid */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+  --sp-16: 64px;
+
+  /* Radii */
+  --r-sm: 4px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-xl: 16px;
+
+  /* Elevation */
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.35);
+  --shadow-lift: 0 8px 32px rgba(0, 0, 0, 0.5);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --t-fast: 120ms var(--ease-out);
+  --t-base: 200ms var(--ease-out);
+  --t-slow: 360ms var(--ease-out);
+}
+
+/* ── Reset ──────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ── Base ───────────────────────────────────────────────────── */
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-base);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+  /* Subtle noise texture for depth — avoids flat monotone look */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+}
+
+/* ── Container ──────────────────────────────────────────────── */
+.container {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: var(--sp-12) var(--sp-6);
+}
+
+/* ── Header ─────────────────────────────────────────────────── */
+.header {
+  text-align: center;
+  padding: var(--sp-12) 0 var(--sp-10);
+  margin-bottom: var(--sp-8);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Wordmark — typographic brand cue, no image dependency */
+.wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0;
+  margin-bottom: var(--sp-4);
+  letter-spacing: -0.04em;
+}
+
+.wordmark-n {
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  color: var(--netflix-red);
+  line-height: 1;
+}
+
+.wordmark-rest {
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  color: var(--text-primary);
+  font-style: italic;
+  /* DM Serif italic adds editorial flair */
+  line-height: 1;
+}
+
+/* Primary heading — display type for hierarchy */
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 400;
+  /* Serif weight carries authority at display sizes */
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--text-primary);
+  margin-bottom: var(--sp-2);
+}
+
+.subtitle {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: var(--sp-8);
+}
+
+/* ── KPI Strip ──────────────────────────────────────────────── */
+/*
+ * Moved from separate metric cards into a unified horizontal strip.
+ * Gestalt principle of proximity: grouping all KPIs together makes
+ * it clear they represent the same dataset.
+ */
+.kpi-strip {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--sp-6);
+  flex-wrap: wrap;
+  padding: var(--sp-5) var(--sp-8);
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  margin: 0 auto;
+  max-width: 900px;
+  box-shadow: var(--shadow-card);
+}
+
+.kpi {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-1);
+}
+
+.kpi-value {
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.kpi-label {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.kpi-divider {
+  width: 1px;
+  height: 36px;
+  background: var(--border);
+}
+
+/* ── Status Banner ──────────────────────────────────────────── */
+#status-banner {
+  margin-bottom: var(--sp-6);
+}
+
+/* ── Cross-filter Bar ──────────────────────────────────── */
+.crossfilter-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-5);
+  background: rgba(75, 159, 212, 0.08);
+  border: 1px solid rgba(75, 159, 212, 0.25);
+  border-radius: var(--r-lg);
+  margin-bottom: var(--sp-6);
+  font-size: 0.8125rem;
+  color: var(--show-color);
+  animation: fadeUp 0.25s var(--ease-out) both;
+}
+
+.crossfilter-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+#crossfilter-label {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+}
+
+.btn-xs {
+  padding: var(--sp-1) var(--sp-3);
+  font-size: 0.6875rem;
+  flex-shrink: 0;
+}
+
+.viz-section.cross-dimmed {
+  opacity: 0.45;
+  pointer-events: none;
+  transition: opacity var(--t-base);
+}
+
+.viz-section.cross-highlighted {
+  box-shadow: 0 0 0 2px rgba(75, 159, 212, 0.35), var(--shadow-card);
+  transition: box-shadow var(--t-base);
+}
+
+.callout {
+  display: flex;
+  gap: var(--sp-3);
+  align-items: flex-start;
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.callout.error {
+  border-color: rgba(224, 94, 106, 0.3);
+  background: rgba(224, 94, 106, 0.06);
+  color: #fca5ab;
+}
+
+.callout.info {
+  border-color: rgba(75, 159, 212, 0.3);
+  background: rgba(75, 159, 212, 0.06);
+}
+
+/* ── Control Panel ──────────────────────────────────────────── */
+.control-panel {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--sp-5) var(--sp-6);
+  margin-bottom: var(--sp-8);
+  box-shadow: var(--shadow-card);
+}
+
+.control-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--sp-3);
+}
+
+.control-label {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.year-display {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--show-color);
+  letter-spacing: -0.01em;
+}
+
+#year-brush-container {
+  height: 80px;
+}
+
+/* ── Viz Sections ───────────────────────────────────────────── */
+.viz-section {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: var(--sp-8);
+  margin-bottom: var(--sp-8);
+  box-shadow: var(--shadow-card);
+  /* Fade-in on paint */
+  animation: fadeUp 0.4s var(--ease-out) both;
+}
+
+.viz-section:nth-child(2) {
+  animation-delay: 60ms;
+}
+
+.viz-section:nth-child(3) {
+  animation-delay: 120ms;
+}
+
+.viz-section:nth-child(4) {
+  animation-delay: 180ms;
+}
+
+.viz-section:nth-child(5) {
+  animation-delay: 240ms;
+}
+
+.viz-section:nth-child(6) {
+  animation-delay: 300ms;
+}
+
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.viz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--sp-6);
+  margin-bottom: var(--sp-8);
+  flex-wrap: wrap;
+}
+
+.viz-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--netflix-red);
+  margin-bottom: var(--sp-1);
+  opacity: 0.8;
+}
+
+.viz-header h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin-bottom: var(--sp-2);
+}
+
+.viz-description {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  max-width: 520px;
+  line-height: 1.65;
+}
+
+.viz-description strong {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.viz-controls {
+  display: flex;
+  gap: var(--sp-2);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* ── Buttons ────────────────────────────────────────────────── */
+/*
+ * Segmented button pattern (btn-seg) instead of independent toggles —
+ * clearer affordance that these are mutually exclusive choices.
+ */
+.btn {
+  padding: var(--sp-2) var(--sp-4);
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: var(--r-md);
+  transition: all var(--t-fast);
+  white-space: nowrap;
+  line-height: 1;
+}
+
+/* Segmented group buttons */
+.btn-seg {
+  background: var(--bg-overlay);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.btn-seg:hover {
+  border-color: var(--border-hover);
+  color: var(--text-primary);
+}
+
+.btn-seg.active {
+  background: var(--netflix-red);
+  border-color: var(--netflix-red);
+  color: #fff;
+}
+
+/* Outline / secondary action */
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.btn-outline:hover {
+  border-color: var(--border-hover);
+  color: var(--text-secondary);
+}
+
+.btn-outline.active {
+  border-color: var(--accent-amber);
+  color: var(--accent-amber);
+}
+
+/* ── Viz Container ──────────────────────────────────────────── */
+.viz-container {
+  min-height: 480px;
+  position: relative;
+}
+
+.viz-details {
+  margin-top: var(--sp-4);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--bg-overlay);
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  min-height: 44px;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  transition: opacity var(--t-base);
+}
+
+/* ── SVG / D3 Styles ────────────────────────────────────────── */
+svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Axes — minimal and unobtrusive */
+.axis path,
+.axis line {
+  stroke: rgba(255, 255, 255, 0.07);
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  fill: var(--text-muted);
+  font-size: 11px;
+  font-family: var(--font-mono);
+}
+
+/* Grid — very subtle, just for reference */
+.grid line {
+  stroke: rgba(255, 255, 255, 0.04);
+  stroke-dasharray: none;
+  /* solid hairlines less noisy than dashed */
+}
+
+/* Crosshair */
+.crosshair {
+  stroke: rgba(255, 255, 255, 0.25);
+  stroke-width: 1px;
+  stroke-dasharray: 4 3;
+  pointer-events: none;
+}
+
+/* Annotation text */
+.annotation-text {
+  font-family: var(--font-body);
+  font-size: 11px;
+  fill: var(--text-secondary);
+}
+
+/* Sunburst center */
+.sunburst-center circle {
+  fill: var(--bg-base);
+  stroke: var(--border);
+  stroke-width: 1px;
+}
+
+.sunburst-center text {
+  text-anchor: middle;
+  fill: var(--text-primary);
+  font-family: var(--font-body);
+}
+
+.sunburst-center .center-sub {
+  fill: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+/* Brush */
+.brush .selection {
+  fill: rgba(75, 159, 212, 0.12);
+  stroke: rgba(75, 159, 212, 0.45);
+  stroke-width: 1px;
+}
+
+.brush .handle {
+  display: none;
+}
+
+/* Treemap nodes */
+.treemap-node {
+  cursor: pointer;
+}
+
+.treemap-node rect {
+  transition: opacity var(--t-fast), filter var(--t-fast);
+}
+
+.treemap-node:hover rect {
+  opacity: 1 !important;
+  filter: brightness(1.2);
+}
+
+/* Layer hover in streamgraph */
+.layer {
+  transition: opacity var(--t-fast);
+}
+
+.layer:hover {
+  opacity: 1 !important;
+}
+
+/* ── Tooltip ────────────────────────────────────────────────── */
+/*
+ * Positioned with JS; pointer-events: none so it never
+ * interferes with mouse targeting of underlying elements.
+ */
+.tooltip {
+  position: fixed;
+  background: rgba(10, 12, 20, 0.96);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--r-lg);
+  padding: var(--sp-3) var(--sp-4);
+  pointer-events: none;
+  font-size: 0.8125rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  z-index: 9000;
+  max-width: 260px;
+  opacity: 0;
+  transition: opacity var(--t-fast);
+}
+
+.tooltip-title {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+  margin-bottom: var(--sp-2);
+  padding-bottom: var(--sp-2);
+  border-bottom: 1px solid var(--border);
+}
+
+.tooltip-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding: 2px 0;
+}
+
+.tooltip-label {
+  color: var(--text-muted);
+}
+
+.tooltip-value {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+}
+
+/* ── Notes Section ──────────────────────────────────────────── */
+.notes-section {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: var(--sp-8);
+  margin-bottom: var(--sp-8);
+}
+
+.notes-section h3 {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 400;
+  margin-bottom: var(--sp-6);
+  color: var(--text-primary);
+}
+
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--sp-5);
+}
+
+.note-card {
+  background: var(--bg-overlay);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: var(--sp-5);
+}
+
+.note-card h4 {
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--show-color);
+  margin-bottom: var(--sp-3);
+  font-weight: 500;
+}
+
+.note-card p {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+
+/* ── Footer ─────────────────────────────────────────────────── */
+.footer {
+  text-align: center;
+  padding: var(--sp-6) 0;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  border-top: 1px solid var(--border);
+}
+
+/* ── Loading State ──────────────────────────────────────────── */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  letter-spacing: 0.06em;
+}
+
+.loading::after {
+  content: '...';
+  animation: blink 1.2s steps(3, end) infinite;
+}
+
+@keyframes blink {
+  0% {
+    content: '.';
+  }
+
+  33% {
+    content: '..';
+  }
+
+  66% {
+    content: '...';
+  }
+
+  100% {
+    content: '.';
+  }
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .container {
+    padding: var(--sp-6) var(--sp-4);
+  }
+
+  .kpi-strip {
+    gap: var(--sp-4);
+    padding: var(--sp-4);
+  }
+
+  .kpi-divider {
+    height: 28px;
+  }
+
+  .kpi-value {
+    font-size: 1.125rem;
+  }
+
+  .viz-header {
+    flex-direction: column;
+    gap: var(--sp-4);
+  }
+
+  .viz-section {
+    padding: var(--sp-6);
+  }
+
+  .viz-controls {
+    width: 100%;
+  }
+}

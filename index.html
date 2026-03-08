@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Netflix Content Strategy Analytics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+
+<body>
+  <div class="container">
+
+    <!-- ═══════════════════════════════════════════════
+         HEADER — Hierarchy: Brand → Title → Meta
+         ═══════════════════════════════════════════════ -->
+    <header class="header" role="banner">
+      <!-- Wordmark replaces giant red title: avoids visual noise -->
+      <div class="wordmark" aria-label="Netflix">
+        <span class="wordmark-n">N</span><span class="wordmark-rest">etflix</span>
+      </div>
+      <h1 class="title">Content Strategy Analytics</h1>
+      <p class="subtitle">Movies &amp; TV Shows · 2010–2025</p>
+
+      <!-- KPI strip: primary metrics surfaced immediately -->
+      <div class="kpi-strip" id="kpi-strip" role="region" aria-label="Key metrics">
+        <div class="kpi" id="kpi-total">
+          <span class="kpi-value">—</span>
+          <span class="kpi-label">Total Titles</span>
+        </div>
+        <div class="kpi-divider" aria-hidden="true"></div>
+        <div class="kpi" id="kpi-movies">
+          <span class="kpi-value">—</span>
+          <span class="kpi-label">Movies</span>
+        </div>
+        <div class="kpi-divider" aria-hidden="true"></div>
+        <div class="kpi" id="kpi-shows">
+          <span class="kpi-value">—</span>
+          <span class="kpi-label">TV Shows</span>
+        </div>
+        <div class="kpi-divider" aria-hidden="true"></div>
+        <div class="kpi" id="kpi-rating">
+          <span class="kpi-value">—</span>
+          <span class="kpi-label">Avg. Rating</span>
+        </div>
+        <div class="kpi-divider" aria-hidden="true"></div>
+        <div class="kpi" id="kpi-range">
+          <span class="kpi-value">—</span>
+          <span class="kpi-label">Year Range</span>
+        </div>
+      </div>
+    </header>
+
+    <div id="status-banner" role="alert" aria-live="polite"></div>
+
+    <!-- Cross-filter status bar -->
+    <div id="crossfilter-bar" class="crossfilter-bar" role="status" aria-live="polite" style="display:none;">
+      <span class="crossfilter-icon">🔗</span>
+      <span id="crossfilter-label">No active filters</span>
+      <button class="btn btn-outline btn-xs" id="clear-all-filters">✕ Clear All Filters</button>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════
+         VIZ 1: Quality & Volume (Bubble Chart)
+         ═══════════════════════════════════════════════ -->
+    <section class="viz-section" aria-labelledby="v1-heading">
+      <div class="viz-header">
+        <div class="viz-header-text">
+          <div class="viz-eyebrow">Chart 1</div>
+          <h2 id="v1-heading">Content Quality &amp; Volume</h2>
+          <p class="viz-description">
+            Each bubble represents a cohort of titles with the same release year and rounded rating.
+            Bubble <strong>area encodes count</strong> (not radius), avoiding perceptual distortion.
+            Red = Movies · Blue = TV Shows.
+          </p>
+        </div>
+        <div class="viz-controls" role="group" aria-label="Filter by content type">
+          <button class="btn btn-seg active" data-viz="quality" data-mode="all" aria-pressed="true">Both</button>
+          <button class="btn btn-seg" data-viz="quality" data-mode="movies" aria-pressed="false">Movies</button>
+          <button class="btn btn-seg" data-viz="quality" data-mode="shows" aria-pressed="false">TV Shows</button>
+        </div>
+      </div>
+      <div id="quality-viz" class="viz-container" aria-label="Quality and volume bubble chart"></div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         VIZ 2: Genre Ecosystem
+         ═══════════════════════════════════════════════ -->
+    <section class="viz-section" aria-labelledby="v2-heading">
+      <div class="viz-header">
+        <div class="viz-header-text">
+          <div class="viz-eyebrow">Chart 2</div>
+          <h2 id="v2-heading">Genre Ecosystem &amp; Balance</h2>
+          <p class="viz-description">
+            Hierarchical breakdown of genres by content type.
+            <strong>Sunburst</strong> preserves hierarchy; <strong>Treemap</strong> optimises area comparison.
+            Click any genre segment to zoom in.
+          </p>
+        </div>
+        <div class="viz-controls" role="group" aria-label="Toggle chart type">
+          <button class="btn btn-seg active" data-viz="genre" data-mode="sunburst" aria-pressed="true">Sunburst</button>
+          <button class="btn btn-seg" data-viz="genre" data-mode="treemap" aria-pressed="false">Treemap</button>
+          <button class="btn btn-outline" data-viz="genre" data-mode="reset">↺ Reset</button>
+        </div>
+      </div>
+      <div id="genre-viz" class="viz-container" aria-label="Genre ecosystem chart"></div>
+      <div id="genre-details" class="viz-details" aria-live="polite" aria-label="Genre detail info"></div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         VIZ 3: Geographic Diversity
+         ═══════════════════════════════════════════════ -->
+    <section class="viz-section" aria-labelledby="v3-heading">
+      <div class="viz-header">
+        <div class="viz-header-text">
+          <div class="viz-eyebrow">Chart 3</div>
+          <h2 id="v3-heading">Geographic Diversity &amp; Market Evolution</h2>
+          <p class="viz-description">
+            Production country share over time. The <strong>dashed amber line</strong> plots Simpson's
+            Diversity Index — values closer to 1.0 indicate more balanced international production.
+          </p>
+        </div>
+        <div class="viz-controls" role="group" aria-label="Toggle chart view">
+          <button class="btn btn-seg active" data-viz="geo" data-mode="stream" aria-pressed="true">Streamgraph</button>
+          <button class="btn btn-seg" data-viz="geo" data-mode="area" aria-pressed="false">Stacked Area</button>
+          <button class="btn btn-outline active" data-viz="geo" data-mode="diversity" aria-pressed="true">Diversity
+            Index</button>
+        </div>
+      </div>
+      <div id="geo-viz" class="viz-container" aria-label="Geographic diversity streamgraph"></div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════
+         VIZ 4: Content Release Heatmap
+         ═══════════════════════════════════════════════ -->
+    <section class="viz-section" aria-labelledby="v4-heading">
+      <div class="viz-header">
+        <div class="viz-header-text">
+          <div class="viz-eyebrow">Chart 4</div>
+          <h2 id="v4-heading">Content Release Heatmap</h2>
+          <p class="viz-description">
+            Month × Year heatmap showing <strong>when titles were added</strong> to Netflix.
+            Darker cells indicate higher content volume. Reveals seasonal release patterns
+            and Netflix's growth trajectory.
+          </p>
+        </div>
+        <div class="viz-controls" role="group" aria-label="Toggle heatmap type">
+          <button class="btn btn-seg active" data-viz="heatmap" data-mode="all" aria-pressed="true">All</button>
+          <button class="btn btn-seg" data-viz="heatmap" data-mode="movies" aria-pressed="false">Movies</button>
+          <button class="btn btn-seg" data-viz="heatmap" data-mode="shows" aria-pressed="false">TV Shows</button>
+        </div>
+      </div>
+      <div id="heatmap-viz" class="viz-container" aria-label="Content release heatmap"></div>
+    </section>
+
+
+
+    <footer class="footer" role="contentinfo">
+      <p>Data: Netflix Movies &amp; TV Shows (2010–2025) · Visualisation: D3.js v7</p>
+    </footer>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+
+</html>
